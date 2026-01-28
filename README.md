@@ -12,6 +12,14 @@ npm install passkit-wallet
 
 React components are optional — if you only use the backend helpers, React is not required.
 
+## Examples
+
+The [`examples/`](./examples) directory has full, runnable examples:
+
+- **Pass & Order Creation** — [Apple Pass](./examples/apple-pass-creation.ts) · [Apple Order](./examples/apple-order-creation.ts) · [Google Wallet](./examples/google-wallet.ts)
+- **Web Service Handlers** — [Express](./examples/express.ts) · [Hono](./examples/hono.ts) · [Elysia](./examples/elysia.ts)
+- **Store Adapters** — [Drizzle ORM](./examples/store-drizzle.ts) · [In-Memory](./examples/store-in-memory.ts)
+
 ## Quick Start
 
 ### Apple Wallet
