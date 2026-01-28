@@ -117,6 +117,14 @@ export const createAppleOrderHandlers = (config: AppleOrderHandlersConfig) => {
         return { status: 404 }
       }
 
+      // Return 304 if the order hasn't been modified since the client's copy
+      if (req.ifModifiedSince) {
+        const clientDate = new Date(req.ifModifiedSince)
+        if (order.updatedAt <= clientDate) {
+          return { status: 304 }
+        }
+      }
+
       const orderBuffer = await config.buildOrder(req.orderIdentifier)
 
       return {
@@ -124,6 +132,7 @@ export const createAppleOrderHandlers = (config: AppleOrderHandlersConfig) => {
         headers: {
           "Content-Type": "application/vnd.apple.order",
           "Content-Disposition": `attachment; filename="${req.orderIdentifier}.order"`,
+          "Last-Modified": order.updatedAt.toUTCString(),
         },
         body: orderBuffer,
       }

@@ -112,6 +112,19 @@ export const createApplePassHandlers = (config: ApplePassHandlersConfig) => {
         return { status: 401 }
       }
 
+      const pass = await store.getPass(req.serialNumber)
+      if (!pass) {
+        return { status: 404 }
+      }
+
+      // Return 304 if the pass hasn't been modified since the client's copy
+      if (req.ifModifiedSince) {
+        const clientDate = new Date(req.ifModifiedSince)
+        if (pass.updatedAt <= clientDate) {
+          return { status: 304 }
+        }
+      }
+
       const passData = await store.getPassData(req.serialNumber)
       if (!passData) {
         return { status: 404 }
@@ -124,6 +137,7 @@ export const createApplePassHandlers = (config: ApplePassHandlersConfig) => {
         headers: {
           "Content-Type": "application/vnd.apple.pkpass",
           "Content-Disposition": `attachment; filename="${req.serialNumber}.pkpass"`,
+          "Last-Modified": pass.updatedAt.toUTCString(),
         },
         body: pkpassBuffer,
       }
