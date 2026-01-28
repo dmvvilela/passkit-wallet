@@ -1,0 +1,56 @@
+{
+  "name": "passkit-wallet",
+  "version": "0.1.0",
+  "description": "Apple Wallet + Google Wallet pass generation made easy",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./apple": {
+      "types": "./dist/apple/index.d.ts",
+      "import": "./dist/apple/index.js"
+    },
+    "./google": {
+      "types": "./dist/google/index.d.ts",
+      "import": "./dist/google/index.js"
+    },
+    "./react": {
+      "types": "./dist/react/index.d.ts",
+      "import": "./dist/react/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@googleapis/walletobjects": "^6.0.0",
+    "@parse/node-apn": "^6.4.3",
+    "@walletpass/pass-js": "^6.9.1",
+    "googleapis": "^144.0.0",
+    "jsonwebtoken": "^9.0.2",
+    "wallet-order-generator": "2.2.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/react": "^18.0.0",
+    "typescript": "^5.7.0"
+  },
+  "peerDependencies": {
+    "react": ">=18"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    }
+  }
+}
