@@ -11,6 +11,21 @@
   "bugs": {
     "url": "https://github.com/dmvvilela/passkit-wallet/issues"
   },
+  "keywords": [
+    "apple-wallet",
+    "google-wallet",
+    "passkit",
+    "pkpass",
+    "wallet-pass",
+    "coupon",
+    "order",
+    "passbook",
+    "apple-pay",
+    "google-pay",
+    "wallet",
+    "pass",
+    "typescript"
+  ],
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
