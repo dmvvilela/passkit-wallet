@@ -1,6 +1,6 @@
 {
   "name": "passkit-wallet",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Apple Wallet + Google Wallet pass generation made easy",
   "license": "MIT",
   "repository": {
