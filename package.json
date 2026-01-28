@@ -1,8 +1,16 @@
 {
   "name": "passkit-wallet",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Apple Wallet + Google Wallet pass generation made easy",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmvvilela/passkit-wallet.git"
+  },
+  "homepage": "https://github.com/dmvvilela/passkit-wallet#readme",
+  "bugs": {
+    "url": "https://github.com/dmvvilela/passkit-wallet/issues"
+  },
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
@@ -18,6 +26,10 @@
     "./google": {
       "types": "./dist/google/index.d.ts",
       "import": "./dist/google/index.js"
+    },
+    "./handlers": {
+      "types": "./dist/handlers/index.d.ts",
+      "import": "./dist/handlers/index.js"
     },
     "./react": {
       "types": "./dist/react/index.d.ts",

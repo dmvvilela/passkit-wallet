@@ -139,6 +139,98 @@ function WalletButtons({ pkpassUrl, googleSaveUrl }) {
 }
 ```
 
+## Handlers (Web Service Protocol)
+
+The `handlers` module implements Apple's web service protocol so you don't have to. Provide a "store" object with async callbacks for your DB, and get back plain `{ status, headers, body }` handler functions you can wire into any framework.
+
+### Apple Pass Handlers
+
+```typescript
+import { createApplePassHandlers } from 'passkit-wallet/handlers'
+
+const handlers = createApplePassHandlers({
+  authenticationToken: 'your-auth-token',
+  store: {
+    getPass: async (serialNumber) => {
+      const pass = await db.findPass(serialNumber)
+      return pass ? { updatedAt: pass.updatedAt } : null
+    },
+    registerDevice: async (deviceLibId, pushToken, serialNumber) => {
+      const existed = await db.upsertRegistration(deviceLibId, pushToken, serialNumber)
+      return existed ? 'already_registered' : 'created'
+    },
+    unregisterDevice: async (deviceLibId, serialNumber) => {
+      await db.deleteRegistration(deviceLibId, serialNumber)
+    },
+    getRegistrations: async (passTypeId, deviceLibId, updatedSince) => {
+      return db.findRegistrations(passTypeId, deviceLibId, updatedSince)
+    },
+    getPassData: async (serialNumber) => {
+      return db.getPassFields(serialNumber)
+    },
+  },
+  buildPass: async (passData) => {
+    // Use your template to build the .pkpass buffer
+    const template = await apple.loadPassTemplate()
+    const pass = template.createPass()
+    // ... set fields from passData
+    return pass.getAsBuffer()
+  },
+  onLog: (logs) => console.log('Apple Wallet logs:', logs),
+})
+
+// Wire into any framework (Express example):
+app.post('/v1/devices/:did/registrations/:ptid/:sn', async (req, res) => {
+  const result = await handlers.registerDevice({
+    deviceLibraryIdentifier: req.params.did,
+    passTypeIdentifier: req.params.ptid,
+    serialNumber: req.params.sn,
+    pushToken: req.body.pushToken,
+    authorization: req.headers.authorization,
+  })
+  res.status(result.status).json(result.body)
+})
+```
+
+### Apple Order Handlers
+
+```typescript
+import { createAppleOrderHandlers } from 'passkit-wallet/handlers'
+
+const orderHandlers = createAppleOrderHandlers({
+  authenticationToken: 'your-order-auth-token',
+  store: {
+    getOrder: async (orderIdentifier) => {
+      const order = await db.findOrder(orderIdentifier)
+      return order ? { updatedAt: order.updatedAt } : null
+    },
+    registerDevice: async (deviceId, pushToken, orderIdentifier) => {
+      const existed = await db.upsertOrderRegistration(deviceId, pushToken, orderIdentifier)
+      return existed ? 'already_registered' : 'created'
+    },
+    unregisterDevice: async (deviceId, orderIdentifier) => {
+      await db.deleteOrderRegistration(deviceId, orderIdentifier)
+    },
+    getRegistrations: async (orderTypeId, deviceId, modifiedSince) => {
+      return db.findOrderRegistrations(orderTypeId, deviceId, modifiedSince)
+    },
+  },
+  buildOrder: async (orderIdentifier) => {
+    // Build and sign the .order buffer
+    const orderBody = apple.mountOrderInstance({ /* ... */ })
+    return apple.generateOrder(orderBody)
+  },
+})
+```
+
+### Handler Methods
+
+**Pass handlers:** `registerDevice`, `unregisterDevice`, `getSerialNumbers`, `getLatestPass`, `log`
+
+**Order handlers:** `registerDevice`, `unregisterDevice`, `getOrderIdentifiers`, `getLatestOrder`, `log`
+
+All handlers return `{ status: number, headers?: Record<string, string>, body?: unknown }`.
+
 ## Apple Certificate Setup
 
 1. Create a Pass Type ID and Order Type ID in the [Apple Developer Portal](https://developer.apple.com/account/resources/identifiers/list/passTypeId).
@@ -179,6 +271,11 @@ function WalletButtons({ pkpassUrl, googleSaveUrl }) {
 - `mountOrderClassBody(issuerId, options)` / `mountOrderObjectBody(issuerId, options)` — build order class/object data.
 - `getClass` / `createClass` / `updateClass` / `updateObject` — CRUD operations on wallet classes and objects.
 - `sendObjectMessage(client, type, resourceId, message)` — attach a message to a wallet object.
+
+### Handlers
+
+- `createApplePassHandlers(config)` — returns handler functions for Apple Pass web service endpoints.
+- `createAppleOrderHandlers(config)` — returns handler functions for Apple Order web service endpoints.
 
 ### React
 

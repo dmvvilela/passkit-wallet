@@ -73,6 +73,23 @@ export type {
   GoogleOrderObjectOptions,
 } from "./google/types.js"
 
+// ── Handlers ─────────────────────────────────────────────────────────────
+export { createApplePassHandlers, createAppleOrderHandlers } from "./handlers/index.js"
+export type {
+  HandlerResponse,
+  ApplePassStore,
+  ApplePassDeviceRequest,
+  ApplePassSerialNumbersRequest,
+  ApplePassLatestRequest,
+  ApplePassHandlersConfig,
+  AppleOrderStore,
+  AppleOrderDeviceRequest,
+  AppleOrderIdentifiersRequest,
+  AppleOrderLatestRequest,
+  AppleOrderHandlersConfig,
+  AppleLogRequest,
+} from "./handlers/index.js"
+
 // ── Factory helpers ─────────────────────────────────────────────────────
 
 import { applePassConfigSchema, appleOrderConfigSchema, googleClientConfigSchema } from "./common/config.js"
